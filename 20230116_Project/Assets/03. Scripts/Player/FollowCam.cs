@@ -8,10 +8,13 @@ public class FollowCam : MonoBehaviour
     private Transform player = null;
 
     [SerializeField]
-    private float height = 5f;
+    private float height = 12f;
+
+    [SerializeField]
+    private float weight = 2f;
 
     private void Update()
     {
-        transform.position = Vector3.Slerp(transform.position, player.position + Vector3.up * height, 0.1f);
+        transform.position = Vector3.Slerp(transform.position, player.position + Vector3.up * height - Vector3.forward * weight, 0.1f);
     }
 }

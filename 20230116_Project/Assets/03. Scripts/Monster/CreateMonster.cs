@@ -8,6 +8,9 @@ public class CreateMonster : MonoBehaviour
     [SerializeField]
     private int monsterCount = 0;
 
+    [SerializeField]
+    private float yPos = 0;
+
     private ObjectPool monsterPool = null;
 
     private Vector3 spawnPos = Vector3.zero;
@@ -18,7 +21,7 @@ public class CreateMonster : MonoBehaviour
 
     private IEnumerator createCor = null;
 
-    private WaitForSeconds spawnDelay = new WaitForSeconds(0.2f);
+    private WaitForSeconds spawnDelay = new WaitForSeconds(1.0f);
 
     private System.Random random = new System.Random();
 
@@ -30,7 +33,7 @@ public class CreateMonster : MonoBehaviour
 
     private void Start()
     {
-        for(int i = 0; i < 50; i++)
+        for(int i = 0; i < 10; i++)
         {
             InitMonster();
         }
@@ -43,7 +46,7 @@ public class CreateMonster : MonoBehaviour
     {
         randX = random.Next(0, 64);
         randZ = random.Next(0, 64);
-        spawnPos.Set(randX, 0, randZ);
+        spawnPos.Set(randX, yPos, randZ);
 
         GameObject monster = monsterPool.GetObject();
         monster.transform.position = spawnPos;
@@ -53,7 +56,7 @@ public class CreateMonster : MonoBehaviour
 
     private IEnumerator CorCreateMonster()
     {
-        while(monsterCount < 150)
+        while(monsterCount < 50)
         {
             yield return spawnDelay;
 
