@@ -27,6 +27,8 @@ public class Monster : MonoBehaviour
     {
         rigid = GetComponent<Rigidbody>();
         anim = transform.GetChild(0).GetComponent<Animator>();
+
+        rigid.velocity = Vector3.zero;
     }
 
     private void Update()
