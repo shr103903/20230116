@@ -1,10 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
+using UnityEngine.UI;
 
 public class CreateMonster : MonoBehaviour
 {
+    [SerializeField]
+    private Text countText = null;
+
+    [SerializeField]
+    private Transform player = null;
+
     [SerializeField]
     private int monsterCount = 0;
 
@@ -42,16 +48,39 @@ public class CreateMonster : MonoBehaviour
         StartCoroutine(createCor);
     }
 
-    private void InitMonster()
+    public void InitMonster()
     {
-        randX = random.Next(0, 64);
-        randZ = random.Next(0, 64);
-        spawnPos.Set(randX, yPos, randZ);
+        do
+        {
+            randX = random.Next(0, 64);
+            randZ = random.Next(0, 64);
+            spawnPos.Set(randX, yPos, randZ);
+        } while (Physics.OverlapSphere(spawnPos, 1.0f, 1 << 6).Length > 0);
 
         GameObject monster = monsterPool.GetObject();
         monster.transform.position = spawnPos;
+        Monster monsterData = monster.GetComponent<Monster>();
+        if (monsterData.playerTransform == null)
+        {
+            monsterData.monsterManager = this;
+            monsterData.playerTransform = this.player;
+        }
+        monsterData.Init();
 
         monsterCount++;
+    }
+
+    public void DeleteMonster(GameObject monster)
+    {
+        monsterCount--;
+        monsterPool.ReturnObject(monster);
+        InitMonster();
+    }
+
+    public void MonsterKilled()
+    {
+        int count = int.Parse(countText.text);
+        countText.text = $"{++count}";
     }
 
     private IEnumerator CorCreateMonster()

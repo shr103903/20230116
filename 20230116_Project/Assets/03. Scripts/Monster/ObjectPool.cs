@@ -4,16 +4,13 @@ using UnityEngine.Assertions;
 
 public class ObjectPool : MonoBehaviour
 {
-    [SerializeField]
-    private Transform player = null;
-
     public GameObject Prefab;
     public int InitialSize;
     private readonly Queue<GameObject> instances = new Queue<GameObject>();
 
     private void Awake()
     {
-        //null¿Œ ∞ÊøÏX
+        //nullÏù∏ Í≤ΩÏö∞X
         Assert.IsNotNull(Prefab);
         Initialize();
     }
@@ -64,9 +61,6 @@ public class ObjectPool : MonoBehaviour
         var obj = Instantiate(Prefab);
         var pooledObject = obj.AddComponent<PooledObject>();
         pooledObject.Pool = this;
-
-        Monster monster = obj.AddComponent<Monster>();
-        monster.player = this.player;
 
         obj.transform.SetParent(transform);
         return obj;

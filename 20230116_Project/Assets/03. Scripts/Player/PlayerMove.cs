@@ -1,48 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class PlayerMove : MonoBehaviour
 {
-    public bool isAttacking = false;
+    public Ease dodgeEase = Ease.OutCubic;
 
-    public LayerMask monsterLayer = new LayerMask();
+    public bool isDodge = false;
+
+    public float speed = 5f;
 
     [SerializeField]
-    private Weapon weapon = null;
+    private PlayerAttack playerAttack = null;
 
     [SerializeField]
     private Animator anim = null;
 
     [SerializeField]
-    private Transform smallAttackPos = null;
-
-    [SerializeField]
-    private Transform bigAttackPos = null;
-
-    [SerializeField]
-    private float speed = 10f;
+    private Image hpBar = null;
 
     private Transform playerTransform = null;
 
     private Vector3 moveVec = Vector3.zero;
 
-    private int attackCount = 0;
-
     private float moveScale = 0;
+
+    private float hp = 1.0f;
 
     //private float horizontal = 0;
 
     //private float vertical = 0;
 
-    private IEnumerator comboCor = null;
-
-    private WaitForSeconds comboDelay = new WaitForSeconds(1.2f);
-
     private void Start()
     {
         playerTransform = GetComponent<Transform>();
-        attackCount = 1;
     }
 
     private void Update()
@@ -53,42 +46,44 @@ public class PlayerMove : MonoBehaviour
 
     public void Attack()
     {
-        if (isAttacking)
+        if (playerAttack.isAttacking || isDodge)
         {
             return;
         }
 
-        isAttacking = true;
-        weapon.isAttacking = true;
-        anim.SetBool("isAttack", true);
-        anim.SetFloat("attackCombo", attackCount * 0.1f);
-        if(attackCount <= 3)
+        playerAttack.Attack();
+    }
+
+    public void Dodge()
+    {
+        if (isDodge || playerAttack.isAttacking)
         {
-            AttackMonster(smallAttackPos, 0.8f);
-        }
-        else
-        {
-            AttackMonster(bigAttackPos, 1.5f);
+            return;
         }
 
-        if (attackCount == 5)
+        isDodge = true;
+        anim.SetBool("IsDodge", true);
+        playerTransform.DOMove(playerTransform.position + playerTransform.forward * 7f, 1.2f).SetEase(dodgeEase).OnComplete(() => 
         {
-            attackCount = 0;
-        }
-        attackCount++;
+            FinishDodge();
+        });
+    }
 
-        if(comboCor != null)
-        {
-            StopCoroutine(comboCor);
-        }
-        comboCor = CorCombo();
-        StartCoroutine(comboCor);
+    private void FinishDodge()
+    {
+        anim.SetBool("IsDodge", false);
+        isDodge = false;
     }
 
     public void Move(float horizontal, float vertical)
     {
         //horizontal = Input.GetAxis("Horizontal");
         //vertical = Input.GetAxis("Vertical");
+        if (isDodge)
+        {
+            return;
+        }
+
         moveVec.Set(horizontal, 0, vertical);
 
         moveScale = moveVec.magnitude;
@@ -105,27 +100,25 @@ public class PlayerMove : MonoBehaviour
         anim.SetFloat("moveFloat", 0);
     }
 
+    public void GetHit(float power)
+    {
+        if (isDodge)
+        {
+            return;
+        }
+
+        hp -= 0.01f * power;
+        hpBar.fillAmount = hp;
+    }
+
+    public void Hill()
+    {
+        hp += 0.2f;
+        hpBar.fillAmount = hp;
+    }
+
     private void Turn(Vector3 moveVec)
     {
         playerTransform.rotation = Quaternion.Slerp(playerTransform.rotation, Quaternion.LookRotation(moveVec), 0.1f);
-    }
-
-    private IEnumerator CorCombo()
-    {
-        yield return comboDelay;
-        if (!isAttacking)
-        {
-            attackCount = 1;
-        }
-        StopCoroutine(comboCor);
-    }
-
-    private void AttackMonster(Transform pos, float radius)
-    {
-        Collider[] monsterColl = Physics.OverlapSphere(pos.position, radius, monsterLayer);
-        foreach(Collider monster in monsterColl)
-        {
-            monster.GetComponent<Monster>().GetHit();
-        }
     }
 }

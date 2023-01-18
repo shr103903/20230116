@@ -26731,6 +26731,13 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
+  - time: 0.2
+    functionName: AttackHit
+    data: 
+    objectReferenceParameter: {fileID: 6092771433218317633, guid: 8fd4ecc8bd1c55a40b0a34f1f16fec52, type: 3}
+    floatParameter: 0
+    intParameter: 1
+    messageOptions: 0
   - time: 0.4
     functionName: FinishAttack
     data: 

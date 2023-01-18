@@ -6,6 +6,9 @@ public class EventMethod : MonoBehaviour
 {
     public bool isMonster = false;
 
+    [SerializeField]
+    private Monster monster = null;
+
     private Animator anim = null;
 
     private void Awake()
@@ -18,6 +21,17 @@ public class EventMethod : MonoBehaviour
 
     public void MonsterHit()
     {
-        anim.SetBool("isHit", false);
+        anim.SetBool("IsHit", false);
+    }
+
+    public void MonsterAttack()
+    {
+        monster.Attack();
+    }
+
+    public void FinishAttack()
+    {
+        //monster.isAttacking = false;
+        anim.SetBool("IsAttack", false);
     }
 }

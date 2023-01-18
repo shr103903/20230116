@@ -21,14 +21,10 @@ public class FollowCam : MonoBehaviour
 
     private IEnumerator shakeCor = null;
 
-    private WaitForSeconds shakeDelay = new WaitForSeconds(0.05f);
+    private WaitForSeconds shakeDelay = new WaitForSeconds(0.02f);
 
     private void Update()
     {
-        if (!isShaking)
-        {
-            //transform.position = Vector3.Slerp(transform.position, player.position + Vector3.up * height - Vector3.forward * weight, 0.1f);
-        }
         transform.position = Vector3.Slerp(transform.position, player.position + Vector3.up * height - Vector3.forward * weight, 0.1f);
 
         if (Input.GetKeyDown(KeyCode.K))
@@ -50,14 +46,14 @@ public class FollowCam : MonoBehaviour
 
     private IEnumerator CorShake()
     {
-        int count = 3;
+        int count = 2;
         currentPos = transform.position;
 
         while (count > 0)
         {
             randomVec = Random.insideUnitSphere;
             randomVec.y = 0;
-            transform.position = currentPos + randomVec * 0.1f;
+            transform.position = Vector3.MoveTowards(transform.position, currentPos + randomVec * 0.3f, 0.05f);
             count--;
 
             yield return shakeDelay;
