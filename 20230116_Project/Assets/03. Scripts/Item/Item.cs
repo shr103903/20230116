@@ -19,8 +19,6 @@ public class Item : MonoBehaviour
 
     public void OpenItemBox()
     {
-        Debug.Log("아이템 상자 공격");
-
         if (isWeaponBox)
         {
             //무기 생성 또는 강화

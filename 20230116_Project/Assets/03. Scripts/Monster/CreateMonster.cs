@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class CreateMonster : MonoBehaviour
 {
+    public float turn = 0.3f;
+
     [SerializeField]
     private Text countText = null;
 
@@ -25,6 +27,8 @@ public class CreateMonster : MonoBehaviour
 
     private float randZ = 0;
 
+    private bool isStart = true;
+
     private IEnumerator createCor = null;
 
     private WaitForSeconds spawnDelay = new WaitForSeconds(1.0f);
@@ -35,11 +39,9 @@ public class CreateMonster : MonoBehaviour
     {
         monsterPool = GetComponent<ObjectPool>();
         monsterCount = 0;
-    }
+        isStart = true;
 
-    private void Start()
-    {
-        for(int i = 0; i < 10; i++)
+        for (int i = 0; i < 10; i++)
         {
             InitMonster();
         }
@@ -85,7 +87,13 @@ public class CreateMonster : MonoBehaviour
 
     private IEnumerator CorCreateMonster()
     {
-        while(monsterCount < 50)
+        if (isStart)
+        {
+            isStart = false;
+            yield return new WaitForSeconds(turn);
+        }
+
+        while(monsterCount < 70)
         {
             yield return spawnDelay;
 

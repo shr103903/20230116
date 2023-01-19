@@ -51,7 +51,7 @@ public class Monster : MonoBehaviour
 
     private IEnumerator attackCor = null;
 
-    private WaitForSeconds attackDelay = new WaitForSeconds(3.0f); 
+    private WaitForSeconds attackDelay = new WaitForSeconds(1.0f); 
 
     private IEnumerator hitCor = null;
 
@@ -109,12 +109,6 @@ public class Monster : MonoBehaviour
                 return;
             }
 
-            if (transform.position.y <= -1 || transform.position.y >= 1)
-            {
-                transform.position = new Vector3(transform.position.x, 0, transform.position.z);
-                return;
-            }
-
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(playerTransform.position - transform.position), 0.05f);
             distance = Vector3.Distance(transform.position, playerTransform.position);
 
@@ -128,6 +122,11 @@ public class Monster : MonoBehaviour
                 else if (!isAttacking)
                 {
                     isAttacking = true;
+                    if(attackCor != null)
+                    {
+                        StopCoroutine(attackCor);
+                    }
+
                     attackCor = CorAttack();
                     StartCoroutine(attackCor);
                 }
@@ -177,6 +176,10 @@ public class Monster : MonoBehaviour
         }
         else if (isAttacking)
         {
+            if(attackCor != null)
+            {
+                StopCoroutine(attackCor);
+            }
             anim.SetBool("IsAttack", false);
             isAttacking = false;
         }
@@ -230,7 +233,6 @@ public class Monster : MonoBehaviour
 
     private IEnumerator CorHit(float power)
     {
-        Debug.Log("공격맞음");
         anim.SetBool("IsHit", true);
 
         yield return hitDelay;

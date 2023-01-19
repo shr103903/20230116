@@ -39,7 +39,6 @@ public class PlayerAttack : MonoBehaviour
 
     public void FinishAttack()
     {
-        Debug.Log("공격 끝");
         if (attackCount == 5)
         {
             attackCount = 0;

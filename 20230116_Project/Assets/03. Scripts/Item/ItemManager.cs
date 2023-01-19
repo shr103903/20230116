@@ -65,7 +65,7 @@ public class ItemManager : MonoBehaviour
 
         int randNum = random.Next(2);
 
-        item = GameObject.Instantiate(randNum == 0 ? atkItem : weaponItem, null);
+        item = GameObject.Instantiate(randNum == 0 ? atkItem : weaponItem, transform);
         item.transform.position = new Vector3(randX, 0.576092f, randZ);
     }
 }
