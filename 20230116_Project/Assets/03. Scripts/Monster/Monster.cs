@@ -12,10 +12,13 @@ public class Monster : MonoBehaviour
     public Vector3 attackScale = Vector3.zero;
 
     [SerializeField]
+    private GameObject childObj = null;
+
+    [SerializeField]
     private Animator anim = null;
 
     [SerializeField]
-    private GameObject hpPanel = null;
+    private Canvas hpPanel = null;
 
     [SerializeField]
     private Transform attackColl = null;
@@ -28,6 +31,8 @@ public class Monster : MonoBehaviour
 
     [SerializeField]
     private float distance = 0;
+
+    private MonsterData child = null;
 
     private PlayerMove player = null;
 
@@ -62,17 +67,34 @@ public class Monster : MonoBehaviour
 
     private WaitForSeconds dieDelay = new WaitForSeconds(10.0f);
 
-    private void Start()
+    private void Awake()
     {
         rigid = GetComponent<Rigidbody>();
         coll = GetComponent<Collider>();
-        anim = transform.GetChild(0).GetComponent<Animator>();
+        anim = transform.GetComponent<Animator>();
         player = playerTransform.GetComponent<PlayerMove>();
         hpBarActive = false;
-
-        attackScale = attackColl.localScale;
-
         rigid.velocity = Vector3.zero;
+
+        child = GameObject.Instantiate(childObj, this.transform).GetComponent<MonsterData>();
+        attackColl = child.attackColl;
+        attackScale = attackColl.localScale;
+        hpPanel = child.hpPanel;
+        hpBar = child.hpBar;
+    }
+
+    private void Start()
+    {
+        //rigid = GetComponent<Rigidbody>();
+        //coll = GetComponent<Collider>();
+        //anim = transform.GetComponent<Animator>();
+        ////anim = transform.GetChild(0).GetComponent<Animator>();
+        //player = playerTransform.GetComponent<PlayerMove>();
+        //hpBarActive = false;
+
+        ////attackScale = attackColl.localScale;
+
+        //rigid.velocity = Vector3.zero;
     }
 
     private void Update()
@@ -91,10 +113,17 @@ public class Monster : MonoBehaviour
     public void Init()
     {
         hpBarActive = false;
-        hpBar.fillAmount = 1.0f;
+        if (hpPanel != null)
+        {
+            hpPanel.enabled = false;
+            hpBar.fillAmount = 1.0f;
+        }
         isHit = false;
         isDead = false;
-        if(hitCor != null)
+        rigid.constraints = RigidbodyConstraints.None;
+        rigid.constraints = RigidbodyConstraints.FreezePositionY;
+        rigid.constraints = RigidbodyConstraints.FreezeRotation;
+        if (hitCor != null)
         {
             StopCoroutine(hitCor);
         }
@@ -158,13 +187,18 @@ public class Monster : MonoBehaviour
 
     public void GetHit(float power)
     {
+        if (isDead)
+        {
+            return;
+        }
+
         if (!hpBarActive)
         {
             hpBarActive = true;
-            hpPanel.SetActive(true);
+            hpPanel.enabled = true;
         }
         hpBar.fillAmount -= 0.1f * power;
-        if(hpBar.fillAmount <= 0)
+        if (hpBar.fillAmount <= 0)
         {
             Dead();
             return;
@@ -201,12 +235,17 @@ public class Monster : MonoBehaviour
 
     private void Dead()
     {
+        if (isDead)
+        {
+            return;
+        }
+
         isDead = true;
         anim.SetBool("IsDead", true);
         rigid.constraints = RigidbodyConstraints.FreezeAll;
         coll.isTrigger = true;
         hpBarActive = false;
-        hpPanel.SetActive(false);
+        hpPanel.enabled = false;
 
         dieCor = CorDead();
         StartCoroutine(dieCor);
@@ -244,7 +283,8 @@ public class Monster : MonoBehaviour
 
     private IEnumerator CorDead()
     {
-        monsterManager.MonsterKilled();
+        //monsterManager.MonsterKilled();
+        GameManager.instance.CatchCountUp();
 
         yield return dieDelay;
         monsterManager.DeleteMonster(this.gameObject);

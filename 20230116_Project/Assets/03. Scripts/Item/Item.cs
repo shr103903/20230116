@@ -13,8 +13,8 @@ public class Item : MonoBehaviour
 
     private void Awake()
     {
-        playerAttack = ItemManager.instance.playerAttack;
-        playerMove = ItemManager.instance.playerMove;
+        //playerAttack = ItemManager.instance.playerAttack;
+        //playerMove = ItemManager.instance.playerMove;
     }
 
     public void OpenItemBox()

@@ -38,6 +38,7 @@ public class ObjectPool : MonoBehaviour
         Assert.IsNotNull(pooledObject);
         Assert.IsTrue(pooledObject.Pool == this);
 
+        Debug.Log("비활성");
         obj.SetActive(false);
         if (!instances.Contains(obj))
             instances.Enqueue(obj);
@@ -54,6 +55,16 @@ public class ObjectPool : MonoBehaviour
 
         foreach (var instance in objectsToReturn)
             ReturnObject(instance);
+    }
+
+    public void SetPooledObj(GameObject obj)
+    {
+        instances.Enqueue(obj);
+
+        PooledObject pooledObject = obj.AddComponent<PooledObject>();
+        pooledObject.Pool = this;
+
+        obj.SetActive(false);
     }
 
     private GameObject CreateInstance()

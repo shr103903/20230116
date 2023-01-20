@@ -16,6 +16,7 @@ public class EventMethod : MonoBehaviour
         if (isMonster)
         {
             anim = GetComponent<Animator>();
+            monster = GetComponent<Monster>();
         }
     }
 

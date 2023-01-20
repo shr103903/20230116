@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ItemManager : MonoBehaviour
 {
-    public static ItemManager instance = null;
+    //public static ItemManager instance = null;
 
     public PlayerAttack playerAttack = null;
 
@@ -30,10 +30,10 @@ public class ItemManager : MonoBehaviour
 
     private void Awake()
     {
-        if(instance == null)
-        {
-            instance = this;
-        }
+        //if(instance == null)
+        //{
+        //    instance = this;
+        //}
     }
 
     private void Start()

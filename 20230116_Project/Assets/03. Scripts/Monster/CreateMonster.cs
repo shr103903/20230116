@@ -14,6 +14,9 @@ public class CreateMonster : MonoBehaviour
     private Transform player = null;
 
     [SerializeField]
+    private Transform monsterParent = null;
+
+    [SerializeField]
     private int monsterCount = 0;
 
     [SerializeField]
@@ -41,6 +44,13 @@ public class CreateMonster : MonoBehaviour
         monsterCount = 0;
         isStart = true;
 
+        for (int i = 1; i <= 70; i++)
+        {
+            monsterPool.SetPooledObj(monsterParent.GetChild(i).gameObject);
+        }
+
+        //monsterParent.GetChild(0).gameObject.SetActive(false);
+
         for (int i = 0; i < 10; i++)
         {
             InitMonster();
@@ -60,14 +70,14 @@ public class CreateMonster : MonoBehaviour
         } while (Physics.OverlapSphere(spawnPos, 1.0f, 1 << 6).Length > 0);
 
         GameObject monster = monsterPool.GetObject();
-        monster.transform.position = spawnPos;
-        Monster monsterData = monster.GetComponent<Monster>();
-        if (monsterData.playerTransform == null)
+        Monster monsterObj = monster.GetComponent<Monster>();
+        if (monsterObj.playerTransform == null)
         {
-            monsterData.monsterManager = this;
-            monsterData.playerTransform = this.player;
+            monsterObj.monsterManager = this;
+            monsterObj.playerTransform = this.player;
         }
-        monsterData.Init();
+        monsterObj.Init();
+        monster.transform.position = spawnPos;
 
         monsterCount++;
     }
@@ -79,11 +89,11 @@ public class CreateMonster : MonoBehaviour
         InitMonster();
     }
 
-    public void MonsterKilled()
-    {
-        int count = int.Parse(countText.text);
-        countText.text = $"{++count}";
-    }
+    //public void MonsterKilled()
+    //{
+    //    int count = int.Parse(countText.text);
+    //    countText.text = $"{++count}";
+    //}
 
     private IEnumerator CorCreateMonster()
     {

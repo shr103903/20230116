@@ -11,7 +11,7 @@ public class LookAtCam : MonoBehaviour
         cam = Camera.main.transform;
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         transform.LookAt(transform.position + cam.rotation * Vector3.back, cam.rotation * Vector3.down);
     }
